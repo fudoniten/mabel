@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mebot = {
-      url = "git+https://git.fudo.org/fudo-public/mebot.git";
+      url = "git+https://fudo.dev/public/mebot.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
