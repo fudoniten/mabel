@@ -34,7 +34,8 @@
         devShells = rec {
           default = updateDeps;
           updateDeps = pkgs.mkShell {
-            buildInputs = with helpers.packages."${system}"; [ updateCljDeps ];
+            buildInputs = with helpers.packages."${system}";
+              [ updateClojureDeps ];
           };
           mabel = pkgs.mkShell {
             buildInputs = with self.packages."${system}"; [ mabel ];
