@@ -12,20 +12,27 @@
       url = "git+https://fudo.dev/public/mebot.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    milquetoast = {
+      url = "git+https://git.fudo.org/fudo-public/milquetoast.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, utils, helpers, mebot, ... }:
+  outputs = { self, nixpkgs, utils, helpers, milquetoast, mebot, ... }:
     utils.lib.eachDefaultSystem (system:
       let
         inherit (helpers.packages."${system}") mkClojureBin;
         pkgs = nixpkgs.legacyPackages."${system}";
-        cljLibs = { "org.fudo/mebot" = "${mebot.packages."${system}".mebot}"; };
+        cljLibs = {
+          "org.fudo/mebot" = mebot.packages."${system}".mebot;
+          "org.fudo/milquetoast" = milquetoast.packages."${system}".milquetoast;
+        };
       in {
         packages = rec {
           default = mabel;
           mabel = mkClojureBin {
             name = "org.fudo/mabel";
-            primaryNamespaces = "mebot.cli";
+            primaryNamespaces = "mabel.cli";
             src = ./.;
             inherit cljLibs;
           };
