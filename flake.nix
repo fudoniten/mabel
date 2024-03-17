@@ -32,7 +32,7 @@
           default = mabel;
           mabel = mkClojureBin {
             name = "org.fudo/mabel";
-            primaryNamespaces = "mabel.cli";
+            primaryNamespace = "mabel.cli";
             src = ./.;
             inherit cljLibs;
           };
@@ -44,9 +44,8 @@
             buildInputs = with helpers.packages."${system}";
               [ updateClojureDeps ];
           };
-          mabel = pkgs.mkShell {
-            buildInputs = with self.packages."${system}"; [ mabel ];
-          };
+          mabel =
+            pkgs.mkShell { buildInputs = [ self.packages."${system}".mabel ]; };
         };
       }) // {
         nixosModules = rec {

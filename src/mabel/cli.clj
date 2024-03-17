@@ -7,7 +7,8 @@
             [mabel.core :as mabel]
             [milquetoast.client :as mqtt]
             [slingshot.slingshot :refer [try+]]
-            [mabel.core :as mabel]))
+            [mabel.core :as mabel])
+  (:gen-class))
 
 (def cli-opts
   [["-v" "--verbose" "Provide verbose output."]
