@@ -390,11 +390,11 @@
         "utils": "utils_5"
       },
       "locked": {
-        "lastModified": 1710023587,
-        "narHash": "sha256-8OL3OO0q/GH+gRK7FoS5PiYM18OicOB/RMlxyMkVofQ=",
+        "lastModified": 1710655152,
+        "narHash": "sha256-Cih07FVNMb/lHl9zD4TGal8Ptuaagw6at9mEVfOuDic=",
         "ref": "refs/heads/master",
-        "rev": "0cbd0b6367e63643d1bd5531dc6eece6e8fe83fc",
-        "revCount": 6,
+        "rev": "7b9e7acf82d17af9d7d29aac35d0ce01c5de8eb5",
+        "revCount": 9,
         "type": "git",
         "url": "https://fudo.dev/public/mebot.git"
       },
@@ -472,11 +472,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1710420202,
-        "narHash": "sha256-MvFKESbq4rUWuaf2RKPNYENaSZEw/jaCLo2gU6oREcM=",
+        "lastModified": 1710565619,
+        "narHash": "sha256-xu/EnZCNdIj7m/QjCNIG5vrCA4TYg5uwFReb9XDxET0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "878ef7d9721bee9f81f8a80819f9211ad1f993da",
+        "rev": "8ac30a39abc5ea67037dfbf090d6e89f187c6e50",
         "type": "github"
       },
       "original": {

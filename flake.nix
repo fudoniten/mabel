@@ -24,8 +24,9 @@
         inherit (helpers.packages."${system}") mkClojureBin;
         pkgs = nixpkgs.legacyPackages."${system}";
         cljLibs = {
-          "org.fudo/mebot" = mebot.packages."${system}".mebot;
-          "org.fudo/milquetoast" = milquetoast.packages."${system}".milquetoast;
+          "org.fudo/mebot" = "${mebot.packages."${system}".mebot}";
+          "org.fudo/milquetoast" =
+            "${milquetoast.packages."${system}".milquetoast}";
         };
       in {
         packages = rec {
