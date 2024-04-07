@@ -25,15 +25,15 @@
    [nil "--matrix-password-file PASSWD_FILE" "File containing Matrix user password."]
    [nil "--matrix-room ROOM" "Room in which to report events."]])
 
-(defn- msg-quit [{:keys [status message]
-                  :or   {status 0}}]
+(defn- msg-quit [& {:keys [status message]
+                    :or   {status 0}}]
   (println message)
   (System/exit status))
 
 (defn- usage
   ([summary] (usage summary []))
   ([summary errors] (->> (concat errors
-                                 ["usage: snooper-client [opts]"
+                                 ["usage: mabel [opts]"
                                   ""
                                   "Options:"
                                   summary])

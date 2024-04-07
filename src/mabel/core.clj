@@ -6,7 +6,6 @@
             [clj-time.core :as t]
             [clj-commons.digest :as digest]
             [clojure.string :as str]
-            [mabel.core :as mabel]
             [slingshot.slingshot :refer [throw+ try+]]
             [clojure.pprint :refer [pprint]])
   (:import org.apache.tika.Tika
