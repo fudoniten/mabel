@@ -78,7 +78,7 @@ in {
           (concatStringsSep " " ([
             "mabel"
             "--mqtt-host=${cfg.mqtt.host}"
-            "--mqtt-port=${cfg.mqtt.port}"
+            "--mqtt-port=${toString cfg.mqtt.port}"
             "--mqtt-user=${cfg.mqtt.username}"
             "--mqtt-password-file=${cfg.mqtt.password-file}"
             "--matrix-domain=${cfg.matrix.domain}"
