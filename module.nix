@@ -72,7 +72,7 @@ in {
         RestartSec = "120s";
         LoadCredential = [
           "mqtt.passwd:${cfg.mqtt.password-file}"
-          "matrix.passwd:${cfg.matrix.password-file}"
+          "matrix.token:${cfg.matrix.password-file}"
         ];
         ExecStart = pkgs.writeShellScript "mabel-server.sh"
           (concatStringsSep " " ([
@@ -80,10 +80,10 @@ in {
             "--mqtt-host=${cfg.mqtt.host}"
             "--mqtt-port=${toString cfg.mqtt.port}"
             "--mqtt-user=${cfg.mqtt.username}"
-            "--mqtt-password-file=${cfg.mqtt.password-file}"
+            "--mqtt-password-file=$CREDENTIALS_DIRECTORY/mqtt.passwd"
             "--matrix-domain=${cfg.matrix.domain}"
             "--matrix-user=${cfg.matrix.username}"
-            "--matrix-password-file=${cfg.matrix.password-file}"
+            "--matrix-password-file=$CREDENTIALS_DIRECTORY/matrix.token"
             "--matrix-room=${cfg.matrix.channel-alias}"
           ]));
       };
