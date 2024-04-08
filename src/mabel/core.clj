@@ -73,7 +73,7 @@
    :all        (t/now)})
 
 (defn- add-silence
-  ([sm camera] (add-silence sm camera (t/plus (t/now) (t/seconds (:pause-time sm)))))
+  ([sm camera]      (add-silence sm camera (t/plus (t/now) (t/seconds (:pause-time sm)))))
   ([sm camera time] (assoc-in sm [:cameras camera] time)))
 
 (defn- silence-all [sm time]
@@ -87,7 +87,6 @@
       false)))
 
 (defmethod handle-update! :detection
-  ;; TODO: Per-cam silences?
   [{{:keys [label camera snapshot] :as update} :content} mebot-room context]
   (println (str "KEYS: " (str/join "," (keys update))))
   (when (not (silenced? (:silence-map @context) camera))
