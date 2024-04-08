@@ -436,11 +436,11 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1712189607,
-        "narHash": "sha256-omI6VqKiobMJK1AsRhhetR3BzKnXzsll4tbRozV7bzE=",
+        "lastModified": 1712261209,
+        "narHash": "sha256-Jgbe0+ExLJMM9JS07EqO5J1YtqzvXuJXdgA+Pk23HUg=",
         "ref": "refs/heads/master",
-        "rev": "2c5594822a56f803ab24b0b6d9d6467c0bc0d23c",
-        "revCount": 106,
+        "rev": "388036ef098361205602575eeb3651110844e9cc",
+        "revCount": 108,
         "type": "git",
         "url": "https://fudo.dev/public/nix-helpers.git"
       },
@@ -528,11 +528,11 @@
         "utils": "utils_8"
       },
       "locked": {
-        "lastModified": 1712189236,
-        "narHash": "sha256-+g3hS5b21N99IYTpnRhjQeJXcllymbwll8RvMlUa1uc=",
+        "lastModified": 1712607956,
+        "narHash": "sha256-q1tU1kNUMuVOcOYl7O37YyYra3Xo1jYTM8F1gV/2Wj0=",
         "ref": "refs/heads/master",
-        "rev": "9960525a3ec0045190daa6a5db596e6826a32aed",
-        "revCount": 12,
+        "rev": "5c45113a4f8fafaeae74504331f04acec986e182",
+        "revCount": 13,
         "type": "git",
         "url": "https://fudo.dev/public/milquetoast.git"
       },
@@ -770,11 +770,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1711668574,
-        "narHash": "sha256-u1dfs0ASQIEr1icTVrsKwg2xToIpn7ZXxW3RHfHxshg=",
+        "lastModified": 1712437997,
+        "narHash": "sha256-g0whLLwRvgO2FsyhY8fNk+TWenS3jg5UdlWL4uqgFeo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "219951b495fc2eac67b1456824cc1ec1fd2ee659",
+        "rev": "e38d7cb66ea4f7a0eb6681920615dfcc30fc2920",
         "type": "github"
       },
       "original": {
