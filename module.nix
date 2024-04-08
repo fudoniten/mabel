@@ -86,9 +86,9 @@ in {
             "--matrix-password-file=${cfg.matrix.password-file}"
             "--matrix-room=${cfg.matrix.channel-alias}"
           ]));
-        unitConfig.ConditionPathExists =
-          [ cfg.mqtt.password-file cfg.matrix.password-file ];
       };
+      unitConfig.ConditionPathExists =
+        [ cfg.mqtt.password-file cfg.matrix.password-file ];
     };
   };
 }
