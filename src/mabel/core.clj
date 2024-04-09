@@ -88,7 +88,6 @@
 
 (defmethod handle-update! :detection
   [{{:keys [label camera snapshot] :as update} :content} mebot-room context]
-  (println (str "KEYS: " (str/join "," (keys update))))
   (when (not (silenced? (:silence-map @context) camera))
     (when (not (has-snapshot? (:recents @context) snapshot))
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
@@ -151,15 +150,12 @@
 
 (defn- add-silence-to-context [reply! context msg]
   (let [[camera & time-els] msg
-        time                (t/plus (t/now)
-                                    (parse-time time-els))]
+        time                (t/plus (t/now) (parse-time time-els))]
     (if (= camera "all")
       (do (reply! "Okay, silencing all!")
           (swap! context assoc-in [:silence-map :all] time))
-      (if (get-in @context [:silence-map :camera camera])
-        (do (reply! (str "Okay, silencing " camera))
-            (swap! context assoc-in [:silence-map :cameras camera] time))
-        (reply! (str "Camera " camera " not found"))))))
+      (do (reply! (str "Okay, silencing " camera))
+          (swap! context update :silence-map add-silence camera time)))))
 
 (defmethod handle-update! :message
   [{{:keys [sender] {:keys [body]} :content} :content} room context]
@@ -181,12 +177,17 @@
 (defmethod handle-update! :default [update _ _]
   (println (str "Unexpected update type for update: " update)))
 
+(defn make-context [& {:keys [default-pause cache-size]
+                       :or   {default-pause 10 cache-size 10}}]
+  (atom {:silence-map (silence-map default-pause)
+         :recents     (snapshot-cache cache-size)}))
+
 (defn notify! [mebot-room detect-chan quit-chan &
                {:keys [cache-size default-pause]
                 :or   {cache-size    10
-                       default-pause 15}}]
-  (let [context   (atom {:silence-map (silence-map default-pause)
-                         :recents     (snapshot-cache cache-size)})
+                       default-pause 10}}]
+  (let [context   (make-context :default-pause default-pause
+                                :cache-size    cache-size)
         mentions  (mebot/room-self-mention-channel! mebot-room)]
     (go-loop [update (alt! detect-chan ([d] {:type :detection :content d})
                            mentions    ([m] {:type :message   :content m})
