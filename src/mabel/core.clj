@@ -93,13 +93,13 @@
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
-      (swap! context update :recents     add-snapshot snapshot)
-      (swap! context update :silence-map add-silence  camera))
+      (swap! context (fn [ctx] (update (pthru ctx) :recents add-snapshot snapshot)))
+      (swap! context (fn [ctx] (update (pthru ctx) :silence-map add-silence camera))))
     context))
 
 (defmethod handle-update! :quit
   [_ mebot-room _]
-  (mebot/room-message! mebot-room (str "Quit requested!")))
+  (mebot/room-message! mebot-room (str "Quitting!")))
 
 (defmacro ->* [& fns]
   (let [v (gensym)]
