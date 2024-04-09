@@ -93,8 +93,8 @@
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
-      (swap! context update :silence-map add-silence  camera)
-      (swap! context update :recents     add-snapshot snapshot))
+      (swap! context update :recents     add-snapshot snapshot)
+      (swap! context update :silence-map add-silence  camera))
     context))
 
 (defmethod handle-update! :quit
