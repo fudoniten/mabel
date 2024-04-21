@@ -98,8 +98,8 @@
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
       (swap! context
-             (fn [cxt]
-               (assert (map? cxt) "Context is not a map!")
+             (fn [ctx]
+               (assert (map? ctx) "Context is not a map!")
                (assert (contains? ctx :recents) "Context is missing :recents key!")
                (assert (contains? ctx :silence-map) "Context is missing :silence-map key!")
                (update
