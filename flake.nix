@@ -5,15 +5,15 @@
     nixpkgs.url = "nixpkgs/nixos-23.11";
     utils.url = "github:numtide/flake-utils";
     helpers = {
-      url = "git+https://fudo.dev/public/nix-helpers.git";
+      url = "github:fudoniten/fudo-nix-helpers";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mebot = {
-      url = "git+https://fudo.dev/public/mebot.git";
+      url = "github:fudoniten/mebot";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     milquetoast = {
-      url = "git+https://fudo.dev/public/milquetoast.git";
+      url = "github:fudoniten/milquetoast";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

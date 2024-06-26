@@ -69,7 +69,7 @@
   (some #{(digest/sha-256 snapshot)} snapshots))
 
 (defn- add-snapshot [{:keys [size snapshots] :as cache} snapshot]
-  (assoc cache :snapshots (take size (conj snapshots (digest/sha-256 snapshot)))))
+  (assoc cache :snapshots (take size (distinct (conj snapshots (digest/sha-256 snapshot))))))
 
 (defn- silence-map [pause-time]
   {:pause-time pause-time
