@@ -66,6 +66,7 @@ in {
       path = [ mabel ];
       wantedBy = [ "multi-user.target" ];
       after = [ "network-online.target" ];
+      requires = [ "network-online.target" ];
       serviceConfig = {
         DynamicUser = true;
         Restart = "on-failure";
