@@ -92,16 +92,16 @@
 
 (defmethod handle-update! :detection
   [{{:keys [label camera snapshot] :as update} :content} mebot-room context]
-  (when (not (silenced? (:silence-map @context) camera))
-    (when (not (has-snapshot? (:recents @context) snapshot))
+  (when (-> @context :silence-map (silenced? camera) not)
+    (when (-> @context :recents (has-snapshot? snapshot) not)
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
       (swap! context
              (->* (pthru)
                   (update :recents add-snapshot snapshot)
-                  (update :silence-map add-silence camera))))
-    context))
+                  (update :silence-map add-silence camera)))))
+  context)
 
 (defmethod handle-update! :quit
   [_ mebot-room _]
@@ -194,7 +194,7 @@
     (go-loop [update (alt! detect-chan ([d] {:type :detection :content d})
                            mentions    ([m] {:type :message   :content m})
                            quit-chan   ([_] {:type :quit}))]
-      (when (not (= (:type update) :quit))
+      (when (-> update :type (= :quit) not)
         (try+
          (handle-update! update mebot-room context)
          (catch Exception e
