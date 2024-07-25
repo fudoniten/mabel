@@ -98,9 +98,10 @@
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
       (swap! context
-             (->* (pthru)
-                  (update :recents add-snapshot snapshot)
-                  (update :silence-map add-silence camera)))))
+             (identity)
+             #_(->* (pthru)
+                    (update :recents add-snapshot snapshot)
+                    (update :silence-map add-silence camera)))))
   context)
 
 (defmethod handle-update! :quit
