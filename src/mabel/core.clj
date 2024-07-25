@@ -99,7 +99,8 @@
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
       (swap! context
              (->* (pthru)
-                  (update :recents add-snapshot snapshot))
+                  (update :recents add-snapshot snapshot)
+                  (update :silence-map add-silence camera))
              #_(->* (pthru)
                     (update :recents add-snapshot snapshot)
                     (update :silence-map add-silence camera)))))
