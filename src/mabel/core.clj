@@ -91,14 +91,13 @@
       false)))
 
 (defmethod handle-update! :detection
-  [{{:keys [label camera snapshot] :as update} :content} mebot-room context]
+  [{{:keys [label camera snapshot]} :content} mebot-room context]
   (when (-> @context :silence-map (silenced? camera) not)
     (when (-> @context :recents (has-snapshot? snapshot) not)
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
-      (swap! context
-             (identity)
+      (swap! context (->* (pthru))
              #_(->* (pthru)
                     (update :recents add-snapshot snapshot)
                     (update :silence-map add-silence camera)))))
@@ -116,7 +115,7 @@
                                                   (assoc :cameras {}))))
       (if (get-in @context [:silence-map :camera camera])
         (do (reply! (str "Okay, unsilencing " camera))
-            (swap! context assoc-in :silence-map [:cameras camera] (t/now)))
+            (swap! context (->* assoc-in [:silence-map :cameras camera] (t/now))))
         (reply! (str "Camera " camera " not found"))))))
 
 (defn- parse-time-element [el]
