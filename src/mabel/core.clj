@@ -97,7 +97,9 @@
       (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
       (let [id (UUID/randomUUID)]
         (mebot/room-image! mebot-room snapshot (str id ".jpg")))
-      (swap! context (->* (pthru))
+      (swap! context
+             (->* (pthru)
+                  (update :recents add-snapshot snapshot))
              #_(->* (pthru)
                     (update :recents add-snapshot snapshot)
                     (update :silence-map add-silence camera)))))
