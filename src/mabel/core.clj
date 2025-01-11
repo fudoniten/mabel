@@ -1,15 +1,13 @@
 (ns mabel.core
   (:require [mebot.client :as mebot]
             [milquetoast.client :as mqtt]
-            [clojure.java.io :as io]
             [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
             [clj-time.core :as t]
             [clj-commons.digest :as digest]
             [clojure.string :as str]
             [slingshot.slingshot :refer [throw+ try+]]
             [clojure.pprint :refer [pprint]])
-  (:import org.apache.tika.Tika
-           java.util.UUID))
+  (:import java.util.UUID))
 
 (defn- pthru [o] (clojure.pprint/pprint o) (flush) o)
 
@@ -17,10 +15,6 @@
   (let [client    (mebot/make-client! domain)
         jwt-token (mebot/get-jwt-token! domain username password)]
     {:client (mebot/request-access! client jwt-token)}))
-
-(defn- detect-mime-type [is]
-  (let [tika (Tika.)]
-    (.detect tika is)))
 
 (defmacro ->* [& fns]
   (let [v (gensym)]
@@ -47,7 +41,7 @@
                         quit-chan ([_] {:type :quit}))]
       (if (= (:type evt) :quit)
         (println "Detection loop quitting...")
-        (let [{{{{:keys [label camera] :as evt} :before} :payload} :content} evt]
+        (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
           (>! detect-chan
               (assoc evt :snapshot
                      (:payload-bytes
@@ -56,9 +50,6 @@
           (recur (alt! evt-chan  ([e] {:type :event :content e})
                        quit-chan ([_] {:type :quit}))))))
     detect-chan))
-
-(defn- current-timestamp []
-  (quot (System/currentTimeMillis) 1000))
 
 (defmulti handle-update! (fn [update & _] (:type update)))
 
