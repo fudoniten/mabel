@@ -2,7 +2,7 @@
   description = "Mabel Home Bot";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.05";
+    nixpkgs.url = "nixpkgs/nixos-24.11";
     utils.url = "github:numtide/flake-utils";
     helpers = {
       url = "github:fudoniten/fudo-nix-helpers";
