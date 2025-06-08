@@ -39,19 +39,6 @@
     (pipeline (parallelism) out xf in)
     out))
 
-(defn- handle-event [evt detect-chan milquetoast-client]
-  (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
-    (try
-      (>! detect-chan
-          (assoc evt :snapshot 
-                 (:payload-bytes
-                  (mqtt/get-raw! milquetoast-client
-                                 (str "frigate/" camera "/" label "/snapshot")))))
-      (catch Exception e
-        (log/error e "Failed to retrieve snapshot for event")))))
-
-(defn- handle-quit []
-  (println "Detection loop quitting..."))
 
 (defn frigate-listen! [milquetoast-client quit-chan]
   "Listens for events from the given client and quit channel."
