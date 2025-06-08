@@ -1,11 +1,7 @@
-(ns mabel.utils)
 (ns mabel.utils
-  (:require [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
+  (:require [clojure.core.async :refer [chan pipeline]]
             [clj-time.core :as t]
-            [clj-commons.digest :as digest]
-            [clojure.string :as str]
-            [clojure.pprint :refer [pprint]])
-  (:import java.util.UUID))
+            [clj-commons.digest :as digest]))
 
 (defn pthru
   "Prints the object and returns it. Useful for debugging.

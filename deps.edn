@@ -22,34 +22,19 @@
         net.coobird/thumbnailator { :mvn/version "0.4.20" }
         org.clojure/tools.logging { :mvn/version "1.3.0" }
         }
- :aliases {
-           :test {:extra-paths ["test"]
-                  :extra-deps  {org.clojure/test.check {:mvn/version "1.1.1"}}
-                  :main-opts   ["-m" "kaocha.runner"]}
+  :aliases {
+           :test {
+                  :extra-paths ["test"]
+                  :extra-deps {
+                               io.github.cognitect-labs/test-runner
+                               {
+                                :git/url "https://github.com/cognitect-labs/test-runner.git"
+                                :sha "dfb30dd6605cb6c0efc275e1df1736f6e90d4d73"
+                                }
+                               }
+                  :main-opts ["-m" "cognitect.test-runner"]
+                  :exec-fn cognitect.test-runner.api/test
+                  }
+           :build { :default-ns build }
            }
- }
-{
- :paths ["src"]
- :deps {
-        org.clojure/clojure { :mvn/version "1.11.1" }
-        org.clojure/tools.cli { :mvn/version "1.0.214" }
-        org.clj-commons/digest { :mvn/version "1.4.100" }
-        clj-time/clj-time { :mvn/version "0.15.2" }
-        metosin/malli { :mvn/version "0.11.0" }
-        org.fudo/mebot {
-                        ;; :git/url "https://fudo.dev/public/mebot.git"
-                        ;; :git/sha "67fad7a8875c7fc04dce20cb3cfb5c98ae64454d"
-                        :local/root "/net/projects/niten/matrix-client"
-                        }
-        org.fudo/milquetoast {
-                              ;; :git/url "https://git.fudo.org/fudo-public/milquetoast.git"
-                              ;; :git/sha "2c5b228f426adc2832d8c295b27970c0948523d5"
-                              :local/root "/net/projects/niten/milquetoast"
-                              }
-        org.apache.tika/tika-core { :mvn/version "2.9.1" }
-        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
-        org.clojure/data.json { :mvn/version "2.5.0" }
-        net.coobird/thumbnailator { :mvn/version "0.4.20" }
-        org.clojure/tools.logging { :mvn/version "1.3.0" }
-        }
  }

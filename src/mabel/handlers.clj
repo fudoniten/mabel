@@ -21,7 +21,7 @@
 (defmulti handle-update! (fn [update & _] (:type update)))
 
 (defmethod handle-update! :detection
-  "Handles a detection update by sending a message and image to the room if the camera is not silenced."
+
   [{{:keys [label camera snapshot]} :content} mebot-room context]
   (when (-> @context :silence-map (silenced? camera) not)
     (when (-> @context :recents (has-snapshot? snapshot) not)
@@ -38,12 +38,10 @@
   context)
 
 (defmethod handle-update! :quit
-  "Handles a quit update by sending a message to the room."
   [_ mebot-room _]
   (mebot/room-message! mebot-room (str "Quitting!")))
 
 (defmethod handle-update! :message
-  "Handles a message update by parsing the message and updating the silence context."
   [{{:keys [sender] {:keys [body]} :content} :content} room context]
   (let [msg    (-> body
                    (str/replace #"^[^:]+: " "")
@@ -61,6 +59,5 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default
-  "Handles an unknown update type by logging a warning."
   [update _ _]
   (log/log-warning! (format "Unexpected update type: %s" update)))

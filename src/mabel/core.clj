@@ -6,6 +6,7 @@
             [clj-commons.digest :as digest]
             [clojure.string :as str]
             [clojure.pprint :refer [pprint]]
+            [mabel.handlers :refer [handle-quit handle-event]]
             [mabel.logging :as log])
   (:import java.util.UUID))
 
@@ -56,13 +57,13 @@
 (defn frigate-listen!
   "Listens for events from the given client and quit channel."
   [milquetoast-client quit-chan]
-  "Listens for events from the given client and quit channel."
   (let [person? (fn [evt] (or (= "person" (-> evt :payload :before :label))
                              (= "person" (-> evt :payload :after  :label))))
         evt-chan (pipe (mqtt/subscribe! milquetoast-client "frigate/events"
                                         :buffer-size 5)
                        (filter person?))
         detect-chan (chan 5)]
+
     (go-loop [evt (alt! evt-chan  ([e] {:type :event :content e})
                         quit-chan ([_] {:type :quit}))]
       (if (= (:type evt) :quit)
@@ -214,7 +215,7 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default [update _ _]
-  (log/warn "Unexpected update type:" update))  
+  (log/log-warning! (format "Unexpected update type: %s" update)))
 
 (defn make-context
   "Creates a new context with the given default pause time and cache size."
@@ -244,80 +245,3 @@
         (recur (alt! detect-chan ([d] {:type :detection :content d})
                      mentions    ([m] {:type :message   :content m})
                      quit-chan   ([_] {:type :quit})))))))
-(ns mabel.utils
-  (:require [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
-            [clj-time.core :as t]
-            [clj-commons.digest :as digest]
-            [clojure.string :as str]
-            [clojure.pprint :refer [pprint]])
-  (:import java.util.UUID))
-
-(ns mabel.handlers
-  (:require [mebot.client :as mebot]
-            [milquetoast.client :as mqtt]
-            [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
-            [clj-time.core :as t]
-            [clj-commons.digest :as digest]
-            [clojure.string :as str]
-            [clojure.pprint :refer [pprint]])
-  (:import java.util.UUID))
-
-(defn- handle-event
-  "Handles a detection event by retrieving the snapshot and putting it on the detection channel."
-  [evt detect-chan milquetoast-client]
-  (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
-    (try
-      (>! detect-chan
-          (assoc evt :snapshot 
-                 (:payload-bytes
-                  (mqtt/get-raw! milquetoast-client
-                                 (str "frigate/" camera "/" label "/snapshot")))))
-      (catch Exception e
-        (log/log-error! e "Failed to retrieve snapshot for event")))))
-
-(defn- handle-quit
-  "Handles the quit event."
-  []
-  (println "Detection loop quitting..."))
-
-(defmulti handle-update! (fn [update & _] (:type update)))
-
-(defmethod handle-update! :detection
-  [{{:keys [label camera snapshot]} :content} mebot-room context]
-  (when (-> @context :silence-map (silenced? camera) not)
-    (when (-> @context :recents (has-snapshot? snapshot) not)
-      (mebot/room-message! mebot-room (str "There's a " label " at the " camera))
-      (let [id (UUID/randomUUID)]
-        (mebot/room-image! mebot-room snapshot (str id ".jpg")))
-      (swap! context
-             (->* (pthru)
-                  (update :recents add-snapshot snapshot)
-                  (update :silence-map add-silence camera))
-             #_(->* (pthru)
-                    (update :recents add-snapshot snapshot)
-                    (update :silence-map add-silence camera)))))
-  context)
-
-(defmethod handle-update! :quit
-  [_ mebot-room _]
-  (mebot/room-message! mebot-room (str "Quitting!")))
-
-(defmethod handle-update! :message
-  [{{:keys [sender] {:keys [body]} :content} :content} room context]
-  (let [msg    (-> body
-                   (str/replace #"^[^:]+: " "")
-                   (str/trim)
-                   (str/lower-case)
-                   (str/split #" "))
-        reply! (fn [msg] (mebot/room-message! room (str sender ": " msg)))]
-    (cond (contains? #{"unmute"
-                       "unsilence"}
-                     (first msg))   (remove-silence-from-context reply! context (rest msg))
-          (contains? #{"silence"
-                       "mute"
-                       "quiet"}
-                     (first msg))   (add-silence-to-context reply! context (rest msg))
-          :else                     (println (str sender " sez: " body)))))
-
-(defmethod handle-update! :default [update _ _]
-  (log/log-event! (str "Unexpected update type: " update)))

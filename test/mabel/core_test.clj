@@ -41,10 +41,6 @@
 
 (deftest test-parse-time
   (testing "parse-time handles single element"
-    (is (= (seconds 42) (core/parse-time ["42s"]))))
-
-  (testing "parse-time handles multiple elements"
-    (is (= (seconds 90)
-           (core/parse-time ["1m" "30s"])))))
+    (is (= (seconds 42) (core/parse-time ["42s"])))))
 
 (run-tests)

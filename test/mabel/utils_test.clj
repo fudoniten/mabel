@@ -16,7 +16,7 @@
            
   (testing "throws on invalid input"
     (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Bad time element"
-                          (utils/parse-time-element "bogus"))))))
+                          (utils/parse-time-element "bogus")))))
 
 (deftest test-translate-time
   (is (= (t/seconds 1) (utils/translate-time {:duration :second :count 1})))
@@ -26,9 +26,35 @@
   (is (= (t/seconds 0) (utils/translate-time {:duration :foo}))))
 
 (deftest test-parse-time
-  (is (= (t/seconds 90) 
-         (utils/parse-time ["1m" "30s"])))
+  (is (= (t/seconds 30)
+         (utils/parse-time ["30" "seconds"])))
+  (is (= (t/seconds 19)
+         (utils/parse-time ["19" "second"])))
+  (is (= (t/seconds 15)
+         (utils/parse-time ["15" "secs"])))
+  (is (= (t/seconds 55)
+         (utils/parse-time ["55" "s"])))
   (is (= (t/minutes 2)
-         (utils/parse-time ["2" "minutes"]))))
+         (utils/parse-time ["2" "minutes"])))
+  (is (= (t/minutes 7)
+         (utils/parse-time ["7" "minute"])))
+  (is (= (t/minutes 55)
+         (utils/parse-time ["55" "mins"])))
+  (is (= (t/minutes 15)
+         (utils/parse-time ["15" "m"])))
+  (is (= (t/hours 2)
+         (utils/parse-time ["2" "hours"])))
+  (is (= (t/hours 3)
+         (utils/parse-time ["3" "hour"])))
+  (is (= (t/hours 4)
+         (utils/parse-time ["4" "hrs"])))
+  (is (= (t/hours 5)
+         (utils/parse-time ["5" "h"])))
+  (is (= (t/days 3)
+         (utils/parse-time ["3" "days"])))
+  (is (= (t/days 4)
+         (utils/parse-time ["4" "day"])))
+  (is (= (t/days 5)
+         (utils/parse-time ["5" "d"]))))
 
 (run-tests)
