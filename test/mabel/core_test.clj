@@ -44,7 +44,7 @@
     (is (= (seconds 42) (core/parse-time ["42s"]))))
 
   (testing "parse-time handles multiple elements"
-    (is (= (plus (minutes 1) (seconds 30))
+    (is (= (seconds 90)
            (core/parse-time ["1m" "30s"])))))
 
 (run-tests)
