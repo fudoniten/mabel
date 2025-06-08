@@ -1,6 +1,5 @@
-
 (ns mabel.utils-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.test :refer [deftest is testing run-tests]]
             [mabel.utils :as utils]
             [clj-time.core :as t]))
 
@@ -31,3 +30,5 @@
          (utils/parse-time ["1m" "30s"])))
   (is (= (t/minutes 2)
          (utils/parse-time ["2" "minutes"]))))
+
+(run-tests)
