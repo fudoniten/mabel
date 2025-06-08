@@ -41,11 +41,14 @@
 
 (defn- handle-event [evt detect-chan milquetoast-client]
   (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
-    (>! detect-chan
-        (assoc evt :snapshot
-               (:payload-bytes
-                (mqtt/get-raw! milquetoast-client
-                               (str "frigate/" camera "/" label "/snapshot")))))))
+    (try
+      (>! detect-chan
+          (assoc evt :snapshot 
+                 (:payload-bytes
+                  (mqtt/get-raw! milquetoast-client
+                                 (str "frigate/" camera "/" label "/snapshot")))))
+      (catch Exception e
+        (log/error e "Failed to retrieve snapshot for event")))))
 
 (defn- handle-quit []
   (println "Detection loop quitting..."))
@@ -195,7 +198,7 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default [update _ _]
-  (println (str "Unexpected update type for update: " update)))
+  (log/warn "Unexpected update type:" update))  
 
 (defn make-context [& {:keys [default-pause cache-size]
                        :or   {default-pause 10 cache-size 10}}]

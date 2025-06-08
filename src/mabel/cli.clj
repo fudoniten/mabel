@@ -1,13 +1,13 @@
 (ns mabel.cli
   (:require [clojure.tools.cli :as cli]
+            [clojure.tools.logging :as log]
             [mebot.client :as mebot]
             [clojure.string :as str]
             [clojure.core.async :refer [>!! <!! chan]]
             [clojure.set :as set]
             [mabel.core :as mabel]
             [milquetoast.client :as mqtt]
-            [slingshot.slingshot :refer [try+]]
-            [mabel.core :as mabel])
+            [slingshot.slingshot :refer [try+]])
   (:gen-class))
 
 (def cli-opts
@@ -27,7 +27,7 @@
 
 (defn- msg-quit [& {:keys [status message]
                     :or   {status 0}}]
-  (println message)
+  (log/infof "Exiting with status %d: %s" status message)
   (System/exit status))
 
 (defn- usage
@@ -75,11 +75,15 @@
                                                                (str/trim))
                                                  :host     mqtt-host
                                                  :port     mqtt-port)
-          jwt       (mebot/get-jwt-token! :domain   matrix-domain
-                                          :username matrix-user
-                                          :password (-> matrix-password-file
-                                                        (slurp)
-                                                        (str/trim)))
+          jwt       (try 
+                      (mebot/get-jwt-token! :domain   matrix-domain
+                                            :username matrix-user
+                                            :password (-> matrix-password-file
+                                                          (slurp)
+                                                          (str/trim)))
+                      (catch Exception e
+                        (log/error e "Failed to get JWT token")
+                        (msg-quit :status 1 :message "Failed to authenticate with Matrix server")))
           mebot     (mebot/request-access! (mebot/make-client! matrix-domain) jwt)
           room      (try+
                      (mebot/join-public-room! mebot :alias matrix-room)
