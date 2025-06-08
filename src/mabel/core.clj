@@ -9,9 +9,14 @@
             [clojure.pprint :refer [pprint]])
   (:import java.util.UUID))
 
-(defn- pthru [o] (clojure.pprint/pprint o) (flush) o)
+(defn- pthru [o] 
+  "Prints the object and returns it. Useful for debugging."
+  (clojure.pprint/pprint o) 
+  (flush) 
+  o)
 
 (defn create! [{:keys [domain username password]}]
+  "Creates a new client with the given domain, username, and password."
   (let [client    (mebot/make-client! domain)
         jwt-token (mebot/get-jwt-token! domain username password)]
     {:client (mebot/request-access! client jwt-token)}))
@@ -21,16 +26,19 @@
     `(fn [~v] (-> ~v ~@fns))))
 
 (defn- parallelism []
+  "Returns the number of available processors plus one."
   (-> (Runtime/getRuntime)
       (.availableProcessors)
       (+ 1)))
 
 (defn pipe [in xf]
+  "Creates a pipeline with the given input and transformation function."
   (let [out (chan)]
     (pipeline (parallelism) out xf in)
     out))
 
 (defn frigate-listen! [milquetoast-client quit-chan]
+  "Listens for events from the given client and quit channel."
   (let [person? (fn [evt] (or (= "person" (-> evt :payload :before :label))
                              (= "person" (-> evt :payload :after  :label))))
         evt-chan (pipe (mqtt/subscribe! milquetoast-client "frigate/events"
