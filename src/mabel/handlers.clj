@@ -1,12 +1,8 @@
-(ns mabel.handlers)
 (ns mabel.handlers
   (:require [mebot.client :as mebot]
+            [mebot.core :as core]
             [milquetoast.client :as mqtt]
-            [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
-            [clj-time.core :as t]
-            [clj-commons.digest :as digest]
-            [clojure.string :as str]
-            [clojure.pprint :refer [pprint]])
+            [clojure.string :as str])
   (:import java.util.UUID))
 
 (defn- handle-event [evt detect-chan milquetoast-client]
