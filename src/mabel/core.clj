@@ -8,7 +8,7 @@
             [clojure.pprint :refer [pprint]])
   (:import java.util.UUID))
 
-(defn- pthru [o] 
+(defn pthru [o] 
   "Prints the object and returns it. Useful for debugging.
   This function is often used in the middle of a threading macro
   to inspect the value being threaded."
@@ -26,7 +26,7 @@
   (let [v (gensym)]
     `(fn [~v] (-> ~v ~@fns))))
 
-(defn- parallelism []
+(defn parallelism []
   "Returns the number of available processors plus one.
   This is used to determine the number of threads to use in the pipeline."
   (-> (Runtime/getRuntime)
@@ -60,16 +60,16 @@
 
 (defmulti handle-update! (fn [update & _] (:type update)))
 
-(defn- snapshot-cache [size]
+(defn snapshot-cache [size]
   {:snapshots [] :size size})
 
-(defn- has-snapshot? [{:keys [snapshots]} snapshot]
+(defn has-snapshot? [{:keys [snapshots]} snapshot]
   (some #{(digest/sha-256 snapshot)} snapshots))
 
-(defn- add-snapshot [{:keys [size snapshots] :as cache} snapshot]
+(defn add-snapshot [{:keys [size snapshots] :as cache} snapshot]
   (assoc cache :snapshots (take size (distinct (conj snapshots (digest/sha-256 snapshot))))))
 
-(defn- silence-map [pause-time]
+(defn silence-map [pause-time]
   "Creates a map to track silence times for different cameras.
   The map contains a global pause time, a map of individual camera pause times,
   and a timestamp indicating when all cameras were last silenced."
@@ -77,14 +77,14 @@
    :cameras    {}
    :all        (t/now)})
 
-(defn- add-silence
+(defn add-silence
   ([sm camera]      (add-silence sm camera (t/plus (t/now) (t/seconds (:pause-time sm)))))
   ([sm camera time] (assoc-in sm [:cameras camera] time)))
 
-(defn- silence-all [sm time]
+(defn silence-all [sm time]
   (assoc sm :all time))
 
-(defn- silenced? [sm camera]
+(defn silenced? [sm camera]
   (if (t/before? (t/now) (:all sm))
     true
     (if-let [silence-end (get-in sm [:cameras camera])]
@@ -111,7 +111,7 @@
   [_ mebot-room _]
   (mebot/room-message! mebot-room (str "Quitting!")))
 
-(defn- remove-silence-from-context [reply! context cameras]
+(defn remove-silence-from-context [reply! context cameras]
   (doseq [camera cameras]
     (if (= camera "all")
       (do (reply! "Okay, unsilencing all!")
@@ -122,7 +122,7 @@
             (swap! context (->* assoc-in [:silence-map :cameras camera] (t/now))))
         (reply! (str "Camera " camera " not found"))))))
 
-(defn- parse-time-element [el]
+(defn parse-time-element [el]
   "Parses a time element string into a map with count and duration keys.
   The string can be a number followed by a duration unit (e.g., '10s' for 10 seconds),
   or just a number (which is interpreted as a count).
@@ -154,10 +154,10 @@
 (defmethod translate-time :default [& _]
   (t/seconds 0))
 
-(defn- parse-time [time-els]
+(defn parse-time [time-els]
   (translate-time (reduce merge (map parse-time-element time-els))))
 
-(defn- add-silence-to-context [reply! context msg]
+(defn add-silence-to-context [reply! context msg]
   (let [[camera & time-els] msg
         time                (t/plus (t/now) (parse-time time-els))]
     (if (= camera "all")

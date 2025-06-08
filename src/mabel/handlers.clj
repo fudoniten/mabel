@@ -5,7 +5,7 @@
             [clojure.string :as str])
   (:import java.util.UUID))
 
-(defn- handle-event [evt detect-chan milquetoast-client]
+(defn handle-event [evt detect-chan milquetoast-client]
   (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
     (>! detect-chan
         (assoc evt :snapshot
@@ -13,7 +13,7 @@
                 (mqtt/get-raw! milquetoast-client
                                (str "frigate/" camera "/" label "/snapshot")))))))
 
-(defn- handle-quit []
+(defn handle-quit []
   (println "Detection loop quitting..."))
 
 (defmulti handle-update! (fn [update & _] (:type update)))
