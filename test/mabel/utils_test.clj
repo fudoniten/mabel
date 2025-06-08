@@ -15,8 +15,8 @@
            (utils/parse-time-element "99"))))
            
   (testing "throws on invalid input"
-    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"bad time element"
-                          (utils/parse-time-element "bogus")))))
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"Bad time element"
+                          (utils/parse-time-element "bogus"))))))
 
 (deftest test-translate-time
   (is (= (t/seconds 1) (utils/translate-time {:duration :second :count 1})))
