@@ -1,12 +1,10 @@
 (ns mabel.handlers
   (:require [mebot.client :as mebot]
             [milquetoast.client :as mqtt]
-            [clojure.core.async :refer [go-loop <! >! chan pipeline alt!]]
-            [clj-time.core :as t]
-            [clj-commons.digest :as digest]
+            [clojure.core.async :refer [>!]]
             [clojure.string :as str]
-            [clojure.pprint :refer [pprint]]
-            [mabel.utils :refer [pthru ->* parallelism pipe snapshot-cache has-snapshot? add-snapshot silence-map add-silence silence-all silenced? parse-time-element translate-time parse-time remove-silence-from-context add-silence-to-context]])
+            [mabel.utils :refer [pthru ->* has-snapshot? add-snapshot add-silence silenced? remove-silence-from-context add-silence-to-context]]
+            [mabel.logging :as log])
   (:import java.util.UUID))
 
 (defn handle-event [evt detect-chan milquetoast-client]
@@ -60,4 +58,4 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default [update _ _]
-  (log/warn "Unexpected update type:" update))  
+  (log/log-warning! (format "Unexpected update type: %s" update)))

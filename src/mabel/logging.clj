@@ -1,4 +1,3 @@
-(ns mabel.logging)
 (ns mabel.logging
   (:require [clojure.tools.logging :as log]))
 
@@ -10,3 +9,6 @@
 
 (defn log-error! [e message]
   (log/error e message))
+
+(defn log-warning! [warning]
+  (log/warn warning))
