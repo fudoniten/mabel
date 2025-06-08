@@ -9,7 +9,8 @@
             [milquetoast.client :as mqtt])
   (:gen-class))
 
-(def cli-opts
+(def ^:private cli-opts
+  "Command line options for the mabel CLI."
   [["-v" "--verbose" "Provide verbose output."]
    ["-h" "--help" "Print this message."]
 
@@ -24,28 +25,39 @@
    [nil "--matrix-password-file PASSWD_FILE" "File containing Matrix user password."]
    [nil "--matrix-room ROOM" "Room in which to report events."]])
 
-(defn- msg-quit [& {:keys [status message]
-                    :or   {status 0}}]
+(defn- msg-quit
+  "Logs a message and exits with the given status code."
+  [& {:keys [status message]
+      :or   {status 0}}]
   (log/infof "Exiting with status %d: %s" status message)
   (System/exit status))
 
 (defn- usage
-  ([summary] (usage summary []))
-  ([summary errors] (->> (concat errors
+  "Generates a usage string from the given summary and errors."
+  ([summary]
+   (usage summary []))
+  ([summary errors]
+   (->> (concat errors
                                  ["usage: mabel [opts]"
                                   ""
                                   "Options:"
                                   summary])
                          (str/join \newline))))
 
-(defn- parse-opts [args required cli-opts]
+(defn- parse-opts
+  "Parses command line options, checking for required arguments."
+  [args required cli-opts]
   (let [{:keys [options] :as result} (cli/parse-opts args cli-opts)
         missing (set/difference required (-> options (keys) (set)))
         missing-errors (map #(format "missing required parameter: %s" (name %))
                             missing)]
     (update result :errors concat missing-errors)))
 
-(defn -main [& args]
+(defn -main
+  "Entry point for the mabel CLI.
+  Parses options, initializes logging, connects to MQTT and Matrix,
+  and starts the notification loop."
+  [& args]
   (log/init!)
   (let [required-args #{:mqtt-host
                         :mqtt-port
