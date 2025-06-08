@@ -9,7 +9,11 @@
             [mabel.logging :as log])
   (:import java.util.UUID))
 
-(defn pthru [o] 
+(defn pthru
+  "Prints the object and returns it. Useful for debugging.
+  This function is often used in the middle of a threading macro
+  to inspect the value being threaded."
+  [o] 
   "Prints the object and returns it. Useful for debugging.
   This function is often used in the middle of a threading macro
   to inspect the value being threaded."
@@ -23,25 +27,35 @@
         jwt-token (mebot/get-jwt-token! domain username password)]
     {:client (mebot/request-access! client jwt-token)}))
 
-(defmacro ->* [& fns]
+(defmacro ->*
+  "Threads the given value through the provided functions, returning a function that takes a value.
+  This is similar to the -> macro, but returns a function instead of a value."
+  [& fns]
   (let [v (gensym)]
     `(fn [~v] (-> ~v ~@fns))))
 
-(defn parallelism []
+(defn parallelism
+  "Returns the number of available processors plus one.
+  This is used to determine the number of threads to use in the pipeline."
+  []
   "Returns the number of available processors plus one.
   This is used to determine the number of threads to use in the pipeline."
   (-> (Runtime/getRuntime)
       (.availableProcessors)
       (+ 1)))
 
-(defn pipe [in xf]
+(defn pipe
+  "Creates a pipeline with the given input and transformation function."
+  [in xf]
   "Creates a pipeline with the given input and transformation function."
   (let [out (chan)]
     (pipeline (parallelism) out xf in)
     out))
 
 
-(defn frigate-listen! [milquetoast-client quit-chan]
+(defn frigate-listen!
+  "Listens for events from the given client and quit channel."
+  [milquetoast-client quit-chan]
   "Listens for events from the given client and quit channel."
   (let [person? (fn [evt] (or (= "person" (-> evt :payload :before :label))
                              (= "person" (-> evt :payload :after  :label))))
@@ -61,16 +75,26 @@
 
 (defmulti handle-update! (fn [update & _] (:type update)))
 
-(defn snapshot-cache [size]
+(defn snapshot-cache
+  "Creates a snapshot cache with the given size."
+  [size]
   {:snapshots [] :size size})
 
-(defn has-snapshot? [{:keys [snapshots]} snapshot]
+(defn has-snapshot?
+  "Checks if the given snapshot is in the cache."
+  [{:keys [snapshots]} snapshot]
   (some #{(digest/sha-256 snapshot)} snapshots))
 
-(defn add-snapshot [{:keys [size snapshots] :as cache} snapshot]
+(defn add-snapshot
+  "Adds a snapshot to the cache, removing the oldest if the cache is full."
+  [{:keys [size snapshots] :as cache} snapshot]
   (assoc cache :snapshots (take size (distinct (conj snapshots (digest/sha-256 snapshot))))))
 
-(defn silence-map [pause-time]
+(defn silence-map
+  "Creates a map to track silence times for different cameras.
+  The map contains a global pause time, a map of individual camera pause times,
+  and a timestamp indicating when all cameras were last silenced."
+  [pause-time]
   "Creates a map to track silence times for different cameras.
   The map contains a global pause time, a map of individual camera pause times,
   and a timestamp indicating when all cameras were last silenced."
@@ -79,13 +103,18 @@
    :all        (t/now)})
 
 (defn add-silence
+  "Adds a silence entry for the given camera to the silence map."
   ([sm camera]      (add-silence sm camera (t/plus (t/now) (t/seconds (:pause-time sm)))))
   ([sm camera time] (assoc-in sm [:cameras camera] time)))
 
-(defn silence-all [sm time]
+(defn silence-all
+  "Silences all cameras until the given time."
+  [sm time]
   (assoc sm :all time))
 
-(defn silenced? [sm camera]
+(defn silenced?
+  "Checks if the given camera is currently silenced."
+  [sm camera]
   (if (t/before? (t/now) (:all sm))
     true
     (if-let [silence-end (get-in sm [:cameras camera])]
@@ -187,12 +216,16 @@
 (defmethod handle-update! :default [update _ _]
   (log/warn "Unexpected update type:" update))  
 
-(defn make-context [& {:keys [default-pause cache-size]
+(defn make-context
+  "Creates a new context with the given default pause time and cache size."
+  [& {:keys [default-pause cache-size]
                        :or   {default-pause 10 cache-size 10}}]
   (atom {:silence-map (silence-map default-pause)
          :recents     (snapshot-cache cache-size)}))
 
-(defn notify! [mebot-room detect-chan quit-chan &
+(defn notify!
+  "Starts a loop to handle updates from the detection channel and mentions, sending notifications to the given room."
+  [mebot-room detect-chan quit-chan &
                {:keys [cache-size default-pause]
                 :or   {cache-size    10
                        default-pause 10}}]
@@ -229,7 +262,9 @@
             [clojure.pprint :refer [pprint]])
   (:import java.util.UUID))
 
-(defn- handle-event [evt detect-chan milquetoast-client]
+(defn- handle-event
+  "Handles a detection event by retrieving the snapshot and putting it on the detection channel."
+  [evt detect-chan milquetoast-client]
   (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
     (try
       (>! detect-chan
@@ -240,7 +275,9 @@
       (catch Exception e
         (log/log-error! e "Failed to retrieve snapshot for event")))))
 
-(defn- handle-quit []
+(defn- handle-quit
+  "Handles the quit event."
+  []
   (println "Detection loop quitting..."))
 
 (defmulti handle-update! (fn [update & _] (:type update)))
