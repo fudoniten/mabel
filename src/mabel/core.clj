@@ -39,6 +39,17 @@
     (pipeline (parallelism) out xf in)
     out))
 
+(defn- handle-event [evt detect-chan milquetoast-client]
+  (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
+    (>! detect-chan
+        (assoc evt :snapshot
+               (:payload-bytes
+                (mqtt/get-raw! milquetoast-client
+                               (str "frigate/" camera "/" label "/snapshot")))))))
+
+(defn- handle-quit []
+  (println "Detection loop quitting..."))
+
 (defn frigate-listen! [milquetoast-client quit-chan]
   "Listens for events from the given client and quit channel."
   (let [person? (fn [evt] (or (= "person" (-> evt :payload :before :label))
@@ -50,13 +61,9 @@
     (go-loop [evt (alt! evt-chan  ([e] {:type :event :content e})
                         quit-chan ([_] {:type :quit}))]
       (if (= (:type evt) :quit)
-        (println "Detection loop quitting...")
-        (let [{{{{:keys [label camera] :as evt} :after} :payload} :content} evt]
-          (>! detect-chan
-              (assoc evt :snapshot
-                     (:payload-bytes
-                      (mqtt/get-raw! milquetoast-client
-                                     (str "frigate/" camera "/" label "/snapshot")))))
+        (handle-quit)
+        (do
+          (handle-event evt detect-chan milquetoast-client)
           (recur (alt! evt-chan  ([e] {:type :event :content e})
                        quit-chan ([_] {:type :quit}))))))
     detect-chan))
