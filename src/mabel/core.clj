@@ -5,7 +5,8 @@
             [clj-time.core :as t]
             [clj-commons.digest :as digest]
             [clojure.string :as str]
-            [clojure.pprint :refer [pprint]])
+            [clojure.pprint :refer [pprint]]
+            [mabel.logging :as log])
   (:import java.util.UUID))
 
 (defn pthru [o] 
@@ -237,7 +238,7 @@
                   (mqtt/get-raw! milquetoast-client
                                  (str "frigate/" camera "/" label "/snapshot")))))
       (catch Exception e
-        (log/error e "Failed to retrieve snapshot for event")))))
+        (log/log-error! e "Failed to retrieve snapshot for event")))))
 
 (defn- handle-quit []
   (println "Detection loop quitting..."))
@@ -282,4 +283,4 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default [update _ _]
-  (println (str "Unexpected update type: " update))))  
+  (log/log-event! (str "Unexpected update type: " update))))

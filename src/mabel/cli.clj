@@ -1,7 +1,7 @@
 (ns mabel.cli
   (:require [clojure.tools.cli :as cli]
-            [clojure.tools.logging :as log]
             [mebot.client :as mebot]
+            [mabel.logging :as log]
             [clojure.string :as str]
             [clojure.core.async :refer [>!! <!! chan]]
             [clojure.set :as set]
@@ -46,6 +46,7 @@
     (update result :errors concat missing-errors)))
 
 (defn -main [& args]
+  (log/init!)
   (let [required-args #{:mqtt-host
                         :mqtt-port
                         :mqtt-user
@@ -81,7 +82,7 @@
                                                           (slurp)
                                                           (str/trim)))
                       (catch Exception e
-                        (log/error e "Failed to get JWT token")
+                        (log/log-error! e "Failed to get JWT token")
                         (msg-quit :status 1 :message "Failed to authenticate with Matrix server")))
           mebot     (mebot/request-access! (mebot/make-client! matrix-domain) jwt)
           room      (try
