@@ -9,7 +9,9 @@
   (:import java.util.UUID))
 
 (defn- pthru [o] 
-  "Prints the object and returns it. Useful for debugging."
+  "Prints the object and returns it. Useful for debugging.
+  This function is often used in the middle of a threading macro
+  to inspect the value being threaded."
   (clojure.pprint/pprint o) 
   (flush) 
   o)
@@ -25,7 +27,8 @@
     `(fn [~v] (-> ~v ~@fns))))
 
 (defn- parallelism []
-  "Returns the number of available processors plus one."
+  "Returns the number of available processors plus one.
+  This is used to determine the number of threads to use in the pipeline."
   (-> (Runtime/getRuntime)
       (.availableProcessors)
       (+ 1)))
@@ -70,6 +73,9 @@
   (assoc cache :snapshots (take size (distinct (conj snapshots (digest/sha-256 snapshot))))))
 
 (defn- silence-map [pause-time]
+  "Creates a map to track silence times for different cameras.
+  The map contains a global pause time, a map of individual camera pause times,
+  and a timestamp indicating when all cameras were last silenced."
   {:pause-time pause-time
    :cameras    {}
    :all        (t/now)})
@@ -120,6 +126,10 @@
         (reply! (str "Camera " camera " not found"))))))
 
 (defn- parse-time-element [el]
+  "Parses a time element string into a map with count and duration keys.
+  The string can be a number followed by a duration unit (e.g., '10s' for 10 seconds),
+  or just a number (which is interpreted as a count).
+  If the string doesn't match these formats, an exception is thrown."
   (if-some [[_ time duration] (re-matches #"^([0-9]+)([a-z]+)" el)]
     (merge (parse-time-element time) (parse-time-element duration))
     (cond (re-matches #"^[0-9]+$" el)                      {:count    (Integer/parseInt el)}
