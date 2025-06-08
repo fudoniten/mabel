@@ -6,8 +6,7 @@
             [clojure.core.async :refer [>!! <!! chan]]
             [clojure.set :as set]
             [mabel.core :as mabel]
-            [milquetoast.client :as mqtt]
-            [slingshot.slingshot :refer [try+]])
+            [milquetoast.client :as mqtt])
   (:gen-class))
 
 (def cli-opts
@@ -85,12 +84,15 @@
                         (log/error e "Failed to get JWT token")
                         (msg-quit :status 1 :message "Failed to authenticate with Matrix server")))
           mebot     (mebot/request-access! (mebot/make-client! matrix-domain) jwt)
-          room      (try+
-                     (mebot/join-public-room! mebot :alias matrix-room)
-                     (catch [:type :mebot/forbidden] {:keys [room-alias]}
-                       (msg-quit :status 2 :message (str "access to "
-                                                         room-alias
-                                                         " forbidden"))))
+          room      (try
+                      (mebot/join-public-room! mebot :alias matrix-room)
+                      (catch clojure.lang.ExceptionInfo e
+                        (if (= (:type (ex-data e)) :mebot/forbidden)
+                          (let [{:keys [room-alias]} (ex-data e)]
+                            (msg-quit :status 2 :message (str "access to "
+                                                              room-alias
+                                                              " forbidden")))
+                          (throw e))))
           evt-chan  (mabel/frigate-listen! milquetoast-client milquetoast-quit)]
       (mabel/notify! room evt-chan mabel-quit)
       (.addShutdownHook (Runtime/getRuntime)

@@ -147,9 +147,8 @@
           (contains?  #{"m" "mins" "minute" "minutes"} el) {:duration :minute}
           (contains?  #{"h" "hrs" "hour" "hours"} el)      {:duration :hour}
           (contains?  #{"d" "day" "days"} el)              {:duration :day}
-          :else (throw (ex-info "Bad time element"
-                        {:type    ::bad-time
-                         :message (str "bad time element: " el)})))))
+          :else (throw (ex-info (str "bad time element: " el) 
+                                {:type ::bad-time})))))
 
 (defmulti translate-time :duration)
 
