@@ -282,4 +282,4 @@
           :else                     (println (str sender " sez: " body)))))
 
 (defmethod handle-update! :default [update _ _]
-  (println (str "Unexpected update type for update: " update))))
+  (println (str "Unexpected update type: " update))))  
