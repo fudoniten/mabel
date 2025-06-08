@@ -5,7 +5,6 @@
             [clj-time.core :as t]
             [clj-commons.digest :as digest]
             [clojure.string :as str]
-            [slingshot.slingshot :refer [throw+ try+]]
             [clojure.pprint :refer [pprint]])
   (:import java.util.UUID))
 
@@ -197,11 +196,11 @@
                            mentions    ([m] {:type :message   :content m})
                            quit-chan   ([_] {:type :quit}))]
       (when (-> update :type (= :quit) not)
-        (try+
-         (handle-update! update mebot-room context)
-         (catch Exception e
-           (mebot/room-message! mebot-room "Encountered error")
-           (pprint e)))
+        (try
+          (handle-update! update mebot-room context)
+          (catch Exception e
+            (mebot/room-message! mebot-room (str "Encountered error: " (.getMessage e)))
+            (pprint (.getStackTrace e))))
         (recur (alt! detect-chan ([d] {:type :detection :content d})
                      mentions    ([m] {:type :message   :content m})
                      quit-chan   ([_] {:type :quit})))))))
