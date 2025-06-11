@@ -29,7 +29,7 @@
   "Logs a message and exits with the given status code."
   [& {:keys [status message]
       :or   {status 0}}]
-  (log/infof "Exiting with status %d: %s" status message)
+  (log/log-event! (format "Exiting with status %d: %s" status message))
   (System/exit status))
 
 (defn- usage
