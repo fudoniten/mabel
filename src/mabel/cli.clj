@@ -38,11 +38,11 @@
    (usage summary []))
   ([summary errors]
    (->> (concat errors
-                                 ["usage: mabel [opts]"
-                                  ""
-                                  "Options:"
-                                  summary])
-                         (str/join \newline))))
+                ["usage: mabel [opts]"
+                 ""
+                 "Options:"
+                 summary])
+        (str/join \newline))))
 
 (defn- parse-opts
   "Parses command line options, checking for required arguments."
