@@ -13,7 +13,7 @@
                         }
         org.fudo/milquetoast {
                               ;; :git/url "https://git.fudo.org/fudo-public/milquetoast.git"
-                              ;; :git/sha "2c5b228f426adc2832d8c295b27970c0948523d5"
+                              ;; :git/sha "2845029fb1ba683bf7fb348ebea14943b7d75ae0"
                               :local/root "/net/projects/niten/milquetoast"
                               }
         org.apache.tika/tika-core { :mvn/version "2.9.1" }
