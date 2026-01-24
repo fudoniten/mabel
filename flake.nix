@@ -2,18 +2,18 @@
   description = "Mabel Home Bot";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.11";
+    nixpkgs.url = "nixpkgs/nixos-25.11";
     utils.url = "github:numtide/flake-utils";
     helpers = {
-      url = "github:fudoniten/fudo-nix-helpers";
+      url = "path:/net/projects/niten/nix-helpers";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     mebot = {
-      url = "github:fudoniten/mebot";
+      url = "path:/net/projects/niten/mebot";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     milquetoast = {
-      url = "github:fudoniten/milquetoast";
+      url = "path:/net/projects/niten/milquetoast";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -43,7 +43,7 @@
           default = updateDeps;
           updateDeps = pkgs.mkShell {
             buildInputs = with helpers.packages."${system}";
-              [ (updateClojureDeps cljLibs) ];
+              [ (updateClojureDeps { deps = cljLibs; }) ];
           };
           mabel =
             pkgs.mkShell { buildInputs = [ self.packages."${system}".mabel ]; };
