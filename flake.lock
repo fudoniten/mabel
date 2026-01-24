@@ -386,14 +386,17 @@
         "utils": "utils_2"
       },
       "locked": {
-        "lastModified": 1769001094,
-        "narHash": "sha256-iNYiNQ20rNmkpZpxjwPT+TTgmanGsPoIec3zOQcw70c=",
-        "path": "/net/projects/niten/nix-helpers",
-        "type": "path"
+        "lastModified": 1769001079,
+        "narHash": "sha256-sxDFX/zjo28jKtNovlHI9nEOn5B3hesVfEecw2Ea+sE=",
+        "owner": "fudoniten",
+        "repo": "fudo-nix-helpers",
+        "rev": "2fe253f7463fc84bbd90c27fe056c23be6abc423",
+        "type": "github"
       },
       "original": {
-        "path": "/net/projects/niten/nix-helpers",
-        "type": "path"
+        "owner": "fudoniten",
+        "repo": "fudo-nix-helpers",
+        "type": "github"
       }
     },
     "helpers_2": {
@@ -455,14 +458,17 @@
         "utils": "utils_5"
       },
       "locked": {
-        "lastModified": 1769286017,
-        "narHash": "sha256-bNZmiQllMalTPbz7e9GPoYU+NZqYTmh6LWgLRG0z1Lc=",
-        "path": "/net/projects/niten/mebot",
-        "type": "path"
+        "lastModified": 1769286916,
+        "narHash": "sha256-WJl7zIUvLC4o4mPQJ7oqBBEuFriL93Decw8McJEuaKg=",
+        "owner": "fudoniten",
+        "repo": "mebot",
+        "rev": "8ea67631f587ab7b10d335cda8b13e7c198bb048",
+        "type": "github"
       },
       "original": {
-        "path": "/net/projects/niten/mebot",
-        "type": "path"
+        "owner": "fudoniten",
+        "repo": "mebot",
+        "type": "github"
       }
     },
     "milquetoast": {
@@ -474,14 +480,17 @@
         "utils": "utils_8"
       },
       "locked": {
-        "lastModified": 1769286004,
-        "narHash": "sha256-9Ghb1p24On89q0naqHORtqqigarw578/7YZPF2SMZus=",
-        "path": "/net/projects/niten/milquetoast",
-        "type": "path"
+        "lastModified": 1769286842,
+        "narHash": "sha256-O7lBHeq6h77iFVoRCWX4wolQYvOXauKaQIjxDryNmik=",
+        "owner": "fudoniten",
+        "repo": "milquetoast",
+        "rev": "888cdc5cf77a100f741a5b00503d85edd19ff578",
+        "type": "github"
       },
       "original": {
-        "path": "/net/projects/niten/milquetoast",
-        "type": "path"
+        "owner": "fudoniten",
+        "repo": "milquetoast",
+        "type": "github"
       }
     },
     "nix-fetcher-data": {

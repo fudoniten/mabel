@@ -1,7 +1,7 @@
 {
  :paths ["src"]
  :deps {
-        org.clojure/clojure { :mvn/version "1.11.1" }
+        org.clojure/clojure { :mvn/version "1.12.3" }
         org.clojure/tools.cli { :mvn/version "1.0.214" }
         org.clj-commons/digest { :mvn/version "1.4.100" }
         clj-time/clj-time { :mvn/version "0.15.2" }
