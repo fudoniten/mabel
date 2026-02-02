@@ -21,7 +21,7 @@
   outputs = { self, nixpkgs, utils, helpers, milquetoast, mebot, ... }:
     utils.lib.eachDefaultSystem (system:
       let
-        inherit (helpers.packages."${system}") mkClojureBin;
+        inherit (helpers.legacyPackages."${system}") mkClojureBin;
         pkgs = nixpkgs.legacyPackages."${system}";
         cljLibs = {
           "org.fudo/mebot" = "${mebot.packages."${system}".mebot}";
@@ -42,7 +42,7 @@
         devShells = rec {
           default = updateDeps;
           updateDeps = pkgs.mkShell {
-            buildInputs = with helpers.packages."${system}";
+            buildInputs = with helpers.legacyPackages."${system}";
               [ (updateClojureDeps { deps = cljLibs; }) ];
           };
           mabel =
